@@ -10,24 +10,27 @@ class PaperInquirer:
         self.load(pdf_dir, description_dir, storage_dir)
 
     def load(self, pdf_dir, description_dir="", storage_dir=""):
-        query_indices_info = self._create_query_indices_info(pdf_dir, description_dir, storage_dir)
-        query_engines_info = self._create_query_engines_info(query_indices_info)
-        self.query_engine_tools = self._create_query_engine_tools(query_engines_info)
+        pdf_dir = self._get_valid_dir(pdf_dir)
+        if pdf_dir:
+            query_indices_info = self._create_query_indices_info(pdf_dir, description_dir, storage_dir)
+            query_engines_info = self._create_query_engines_info(query_indices_info)
+            self.query_engine_tools = self._create_query_engine_tools(query_engines_info)
 
     def inquire(self, question):
         response = ""
         if self.query_engine_tools is not None:
             agent = self._get_agent(self.query_engine_tools)
             response = agent.chat(question)
-        return response
+        else:
+            raise ValueError("No query engine tools loaded")
+        return str(response)
 
     @staticmethod
     def _get_agent(query_engine_tools):
         llm = OpenAI(model="gpt-3.5-turbo-0613")
         agent = ReActAgent.from_tools(
             query_engine_tools,
-            llm=llm,
-            verbose=True
+            llm=llm
         )
         return agent
 
@@ -42,6 +45,7 @@ class PaperInquirer:
                     ).load_data()
                     doc_index = VectorStoreIndex.from_documents(doc)
                     if storage_dir:
+                        storage_dir = self._get_valid_dir(storage_dir)
                         doc_index.storage_context.persist(persist_dir=storage_dir + file.split(".pdf")[0])
                 doc_index_info = {'name': file.split(".pdf")[0], 'index': doc_index,
                                   'description': self._get_description_info(description_dir, file.split(".pdf")[0])}
@@ -82,11 +86,23 @@ class PaperInquirer:
             )
         return tools_info_list
 
+    def _get_description_info(self, description_dir, file):
+        description_info = ""
+        if description_dir:
+            description_dir = self._get_valid_dir(description_dir)
+            abstract_file = description_dir + file + ".txt"
+            try:
+                with open(abstract_file, 'r') as file_name:
+                    return file_name.read()
+            except:
+                description_info = ""
+        return description_info
+
     @staticmethod
-    def _get_description_info(description_dir, file):
-        abstract_file = description_dir + file + ".txt"
-        try:
-            with open(abstract_file, 'r') as file_name:
-                return file_name.read()
-        except:
+    def _get_valid_dir(directory):
+        if not os.path.isdir(directory):
+            raise ValueError(f'{directory} is not a directory')
             return ""
+        if not directory.endswith("/"):
+            directory += "/"
+        return directory

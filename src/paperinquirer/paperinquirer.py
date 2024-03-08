@@ -47,7 +47,7 @@ class PaperInquirer:
                     if storage_dir:
                         storage_dir = self._get_valid_dir(storage_dir)
                         doc_index.storage_context.persist(persist_dir=storage_dir + file.split(".pdf")[0])
-                doc_index_info = {'name': file.split(".pdf")[0], 'index': doc_index,
+                doc_index_info = {'name': self._remove_hyphen(file.split(".pdf")[0]), 'index': doc_index,
                                   'description': self._get_description_info(description_dir, file.split(".pdf")[0])}
                 indices_list.append(doc_index_info)
         return indices_list
@@ -106,3 +106,7 @@ class PaperInquirer:
         if not directory.endswith(os.path.sep):
             directory += os.path.sep
         return directory
+
+    @staticmethod
+    def _remove_hyphen(file_name):
+        return file_name.replace("-", "_")

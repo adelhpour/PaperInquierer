@@ -103,6 +103,6 @@ class PaperInquirer:
         if not os.path.isdir(directory):
             raise ValueError(f'{directory} is not a directory')
             return ""
-        if not directory.endswith("/"):
-            directory += "/"
+        if not directory.endswith(os.path.sep):
+            directory += os.path.sep
         return directory

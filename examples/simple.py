@@ -1,7 +1,7 @@
 import paperinquirer
 
-pdf_dir = "path/to/pdf/files"
+resource_dirs = "path/to/pdf/files"
 question = "A/question/to/ask"
 
-inquirer = paperinquirer.PaperInquirer(pdf_dir)
+inquirer = paperinquirer.PaperInquirer(resource_dirs=resource_dirs)
 print(inquirer.inquire(question))

@@ -64,7 +64,7 @@ class PaperInquirer:
     def _embellish_question(self, question):
         embellished_question = ""
         if len(self.file_list):
-            embellished_question += "Use "
+            embellished_question += "You have to use "
             for file_index in range(len(self.file_list)):
                 embellished_question += self.file_list[file_index].split(".")[0]
                 if file_index < len(self.file_list) - 1:
@@ -72,7 +72,7 @@ class PaperInquirer:
                         embellished_question += " and "
                     else:
                         embellished_question += ", "
-            embellished_question += " tools to answer the following question: " + question
+            embellished_question += " resources to answer the following question: " + question
         else:
             embellished_question = question
 

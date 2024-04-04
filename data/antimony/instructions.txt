@@ -1,0 +1,4 @@
+In the reactions section, the mathematical expression after each reaction in the list of reactions is called kinetic law. If it is asked for, check the list of reactions and grab its mathematical expression, call it kinetic law and return it.
+
+Species is the name for the participants of each reaction in the list of reactions. For example, the species of in A -> B reaction are A and B.
+
